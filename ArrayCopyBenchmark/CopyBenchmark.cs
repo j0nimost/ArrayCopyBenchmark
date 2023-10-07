@@ -42,7 +42,7 @@ namespace ArrayCopyBenchmark
         [ArgumentsSource(nameof(GetIntArray))]
         public void BufferBlockCopy(int[] array)
         {
-            Buffer.BlockCopy(array, 0, Destination, 0, array.Length);
+            Buffer.BlockCopy(array, 0, Destination, 0, array.Length * 4);
         }
 
         [Benchmark]
