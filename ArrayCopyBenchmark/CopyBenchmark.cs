@@ -52,22 +52,15 @@ namespace ArrayCopyBenchmark
             array.AsSpan().CopyTo(Destination);
         }
 
-        // fails to run on windows; windows defender is a blocker
-        //[Benchmark]
-        //[ArgumentsSource(nameof(GetIntArray))]
-        //public void MarshalCopy(int[] array)
-        //{
-        //    IntPtr ptr = Marshal.AllocHGlobal(Destination.Length);
-        //    Marshal.Copy(array, 0, ptr, array.Length);
-        //    Marshal.FreeHGlobal(ptr);
-        //}
-
         [Benchmark]
         [ArgumentsSource(nameof(GetIntArray))]
-        public void SIMDCopy(int[] array)
+        public void MarshalCopy(int[] array)
         {
-            var vector = new Vector<int>(array);
-            vector.CopyTo(Destination);
+            int size = 4 * array.Length;
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.Copy(array, 0, ptr, array.Length);
+            Marshal.Copy(ptr, Destination, 0, array.Length);
+            Marshal.FreeHGlobal(ptr);
         }
     }
 }
