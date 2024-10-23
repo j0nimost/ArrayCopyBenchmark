@@ -54,13 +54,13 @@ namespace ArrayCopyBenchmark
 
         [Benchmark]
         [ArgumentsSource(nameof(GetIntArray))]
-        public void MarshalCopy(int[] array)
+        public unsafe void MarshalCopy(int[] array)
         {
-            int size = 4 * array.Length;
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(array, 0, ptr, array.Length);
-            Marshal.Copy(ptr, Destination, 0, array.Length);
-            Marshal.FreeHGlobal(ptr);
+            fixed (int* dstPtr = Destination)
+            {
+                IntPtr ptr = (IntPtr)dstPtr;
+                Marshal.Copy(array, 0, ptr, array.Length);
+            }
         }
     }
 }
